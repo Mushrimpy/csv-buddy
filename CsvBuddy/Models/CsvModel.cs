@@ -4,10 +4,10 @@ namespace CsvBuddy.Models
 {
     public class CsvField(string value, bool isQuoted = false)
     {
-        private string Value { get; set; } = value;
+        public string Value { get; set; } = value;
         public bool IsQuoted { get; set; } = isQuoted;
     }
-    public abstract class CsvRecord
+    public class CsvRecord
     {
         private List<CsvField> Fields { get; } = new List<CsvField>();
         public void AddField(CsvField field) => Fields.Add(field);

@@ -1,22 +1,26 @@
 // Recursive descent parser
 
+// Need to fix implementation to accept header record 
+
 using System;
 
 namespace CsvBuddy.Services;
 
 public class ParserService
 {
-    public void Parse(ITokenizer reader)
-    {
-        while (reader.GetNext() != CsvConstants.Eof)
-        {
-            ParseCsvRecord(reader);
-        }
+    public void Parse(ITokenizer reader, IConsumer consumer) {
+        ParseFile(reader, consumer);
     }
 
-    private void ParseCsvRecord(ITokenizer reader)
+    private void ParseFile(ITokenizer reader, IConsumer consumer) {
+        while (reader.GetNext() != CsvConstants.Eof) {
+            ParseRecord(reader, consumer);
+        }
+        consumer.SignalEndOfFile();
+    }
+    private void ParseRecord(ITokenizer reader, IConsumer consumer)
     {
-        ParseCsvStringList(reader);
+        ParseStringList(reader, consumer);
         char ch = reader.Read();
         if (ch == CsvConstants.Eof)
         {
@@ -27,37 +31,40 @@ public class ParserService
         {
             throw new Exception("End of record was expected but more data exists.");
         }
+        consumer.SignalEndOfRecord();
     }
 
-    private void ParseCsvStringList(ITokenizer reader)
+    private void ParseStringList(ITokenizer reader, IConsumer consumer)
     {
         char ch;
         do
         {
-            ParseRawString(reader);
+            ParseRawString(reader, consumer);
             ch = reader.Read();
         } while (ch == ',');
         reader.Backtrack(ch);
     }
 
-    private void ParseRawString(ITokenizer reader)
+    private void ParseRawString(ITokenizer reader, IConsumer consumer)
     {
         ParseOptionalSpaces(reader);
-        ParseRawField(reader);
+        ParseRawField(reader, consumer);
         if (!IsFieldTerminator(reader.GetNext()))
             ParseOptionalSpaces(reader);
     }
 
-    private void ParseRawField(ITokenizer reader)
+    private void ParseRawField(ITokenizer reader, IConsumer consumer)
     {
+        string fieldValue = String.Empty;
         char ch = reader.GetNext();
         if (!IsFieldTerminator(ch))
         {
             if (ch == '"')
-                ParseQuotedField(reader);
+                fieldValue = ParseQuotedField(reader);
             else
-                ParseSimpleField(reader);
+                fieldValue = ParseSimpleField(reader);
         }
+        consumer.ConsumeField(fieldValue);
     }
 
     private string ParseQuotedField(ITokenizer reader)
@@ -113,8 +120,16 @@ public class ParserService
     }
 
     private bool IsFieldTerminator(char c) => c == ',' || c == '\n' || c == CsvConstants.Eof;
-    private static bool IsSpace(char c) => c == ' ' || c == '\t';
-    private void ParseOptionalSpaces(ITokenizer reader) { while (IsSpace(reader.Read())) { } reader.Backtrack(reader.GetNext()); }
+    private bool IsSpace(char c) => c == ' ' || c == '\t';
+
+    private void ParseOptionalSpaces(ITokenizer reader) 
+    {
+        char ch;
+        do {  
+            ch = reader.Read();
+        } while (IsSpace(ch));
+        reader.Backtrack(ch); 
+    }
     private static bool ProcessDoubleQuote(ITokenizer reader, char ch) => ch == '"' && reader.GetNext() == '"' && reader.Read() != '\0';
     private bool IsBadSimpleFieldChar(char c) => IsSpace(c) || IsFieldTerminator(c) || c == '"';
 }
