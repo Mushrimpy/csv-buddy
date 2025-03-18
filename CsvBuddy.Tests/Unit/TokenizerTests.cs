@@ -29,7 +29,7 @@ public class TokenizerTests
     public void GetNext_ShouldReturnBacktrackedChar_AfterBacktrack()
     {
         var tokenizer = new TokenizerService("abc");
-        tokenizer.Read(); // Read 'a'
+        tokenizer.Read();
         tokenizer.Backtrack('a');
         var result = tokenizer.GetNext();
         result.Should().Be('a');
@@ -49,7 +49,7 @@ public class TokenizerTests
     public void Read_ShouldReturnBacktrackedChar_AfterBacktrack()
     {
         var tokenizer = new TokenizerService("abc");
-        tokenizer.Read(); // Read 'a'
+        tokenizer.Read(); 
         tokenizer.Backtrack('a');
         var result = tokenizer.Read();
         result.Should().Be('a');
@@ -59,7 +59,7 @@ public class TokenizerTests
     public void Read_ShouldConvertCrToLf()
     {
         var tokenizer = new TokenizerService("a\rb");
-        tokenizer.Read(); // Read 'a'
+        tokenizer.Read(); 
         var result = tokenizer.Read();
         result.Should().Be('\n');
     }
@@ -68,7 +68,7 @@ public class TokenizerTests
     public void Read_ShouldSkipCrInCrLf()
     {
         var tokenizer = new TokenizerService("a\r\nb");
-        tokenizer.Read(); // Read 'a'
+        tokenizer.Read(); 
         var result = tokenizer.Read();
         result.Should().Be('\n');
     }
@@ -99,10 +99,10 @@ public class TokenizerTests
     public void ReadAndGetNext_ShouldWorkCorrectlyTogether()
     {
         var tokenizer = new TokenizerService("abc");
-        tokenizer.GetNext().Should().Be('a'); // Peek at 'a'
-        tokenizer.Read().Should().Be('a'); // Read 'a'
-        tokenizer.GetNext().Should().Be('b'); // Peek at 'b'
-        tokenizer.Read().Should().Be('b'); // Read 'b'
+        tokenizer.GetNext().Should().Be('a'); 
+        tokenizer.Read().Should().Be('a'); 
+        tokenizer.GetNext().Should().Be('b');
+        tokenizer.Read().Should().Be('b'); 
     }
 
     [Fact]
@@ -110,9 +110,9 @@ public class TokenizerTests
     {
         var tokenizer = new TokenizerService("a\rb\r\nc\nd");
         tokenizer.Read().Should().Be('a');
-        tokenizer.Read().Should().Be('\n'); // Converted \r
+        tokenizer.Read().Should().Be('\n'); 
         tokenizer.Read().Should().Be('b');
-        tokenizer.Read().Should().Be('\n'); // From \r\n
+        tokenizer.Read().Should().Be('\n'); 
         tokenizer.Read().Should().Be('c');
         tokenizer.Read().Should().Be('\n');
         tokenizer.Read().Should().Be('d');
@@ -122,19 +122,19 @@ public class TokenizerTests
     public void Backtrack_ShouldRestoreCharacterForNextRead()
     {
         var tokenizer = new TokenizerService("abc");
-        tokenizer.Read(); // Read 'a'
+        tokenizer.Read(); 
         tokenizer.Backtrack('a');
         tokenizer.Read().Should().Be('a');
-        tokenizer.Read().Should().Be('b'); // Continues with the rest
+        tokenizer.Read().Should().Be('b'); 
     }
 
     [Fact]
     public void Backtrack_ShouldPreserveRestOfString()
     {
         var tokenizer = new TokenizerService("abc");
-        tokenizer.Read(); // Read 'a'
+        tokenizer.Read();
         tokenizer.Backtrack('a');
-        tokenizer.Read(); // Re-read 'a'
+        tokenizer.Read();
         tokenizer.Read().Should().Be('b');
         tokenizer.Read().Should().Be('c');
         tokenizer.Read().Should().Be(CsvConstants.Eof);
