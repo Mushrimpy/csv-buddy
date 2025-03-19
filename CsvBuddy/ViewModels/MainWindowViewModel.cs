@@ -1,6 +1,7 @@
-﻿namespace CsvBuddy.ViewModels;
-
-public partial class MainWindowViewModel : ViewModelBase
+﻿namespace CsvBuddy.ViewModels
 {
-    public string Greeting { get; } = "Welcome to CSV Buddy!";
+    public partial class MainWindowViewModel : ViewModelBase
+    {
+        public InteractionViewModel InteractionSample { get; } = new InteractionViewModel();
+    }
 }

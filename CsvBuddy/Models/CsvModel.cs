@@ -9,7 +9,7 @@ namespace CsvBuddy.Models
     }
     public class CsvRecord
     {
-        private List<CsvField> Fields { get; } = new List<CsvField>();
+        public List<CsvField> Fields { get; } = new List<CsvField>();
         public void AddField(CsvField field) => Fields.Add(field);
         public void AddField(string value, bool isQuoted = false) => Fields.Add(new CsvField(value, isQuoted));
         public int FieldCount => Fields.Count;
@@ -18,7 +18,7 @@ namespace CsvBuddy.Models
 
     public class CsvFile(string? filename = null)
     {
-        private List<CsvRecord> Records { get; } = new List<CsvRecord>();
+        public List<CsvRecord> Records { get; } = new List<CsvRecord>();
         public string? Filename { get; set; } = filename;
         public void AddRecord(CsvRecord record) => Records.Add(record);
         public int RecordCount => Records.Count;

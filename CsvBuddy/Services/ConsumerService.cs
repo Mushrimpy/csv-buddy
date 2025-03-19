@@ -9,7 +9,7 @@ public interface IConsumer
     void SignalEndOfFile();
 }
 
-public class ConsumerService(CsvFile csvFile) : IConsumer
+public class ConsumerService(CsvFile? csvFile) : IConsumer
 {
     private CsvRecord _currentRecord = new CsvRecord();
     public void ConsumeField(string s) => _currentRecord.AddField(s);

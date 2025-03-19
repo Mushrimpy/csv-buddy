@@ -5,11 +5,11 @@ using CsvBuddy.Models;
 
 namespace CsvBuddy.Services;
 
-public class CsvFileService
+public class FileService
 {
     private readonly ParserService _parser = new ParserService();
 
-    public CsvFile LoadCsv(string filePath)
+    public CsvFile? LoadCsv(string filePath)
     {
         var csvFile = new CsvFile(filePath);
         var tokenizer = new TokenizerService(File.ReadAllText(filePath));
