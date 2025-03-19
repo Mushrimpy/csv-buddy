@@ -17,6 +17,10 @@
         <vm:MainWindowViewModel/>
     </Design.DataContext>
     
-    <v:InteractionView DataContext="{Binding InteractionSample}" />
- 
+    <Grid RowDefinitions="Auto,*">
+        <v:InteractionView Grid.Row="0" DataContext="{Binding InteractionSample}" />
+        <v:DataView Grid.Row="1" DataContext="{Binding InteractionSample.DataViewModel}" />
+    </Grid>
+
+
 </Window>

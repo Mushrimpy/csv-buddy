@@ -35,5 +35,9 @@
         <DependentUpon>InteractionView.axaml</DependentUpon>
         <SubType>Code</SubType>
       </Compile>
+      <Compile Update="Views\DataView.axaml.cs">
+        <DependentUpon>DataView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
     </ItemGroup>
 </Project>

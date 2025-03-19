@@ -33,7 +33,7 @@ namespace CsvBuddy.Views
                         Title = context.Input
                     });
                
-            context.SetOutput(storageFiles.Select(x => x.Name).ToArray());
+            context.SetOutput(storageFiles.Select(x => x.Path.LocalPath).ToArray());
         }
     }
 }

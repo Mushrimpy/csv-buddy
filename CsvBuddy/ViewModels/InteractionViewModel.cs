@@ -3,30 +3,33 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using ReactiveUI;
 
-namespace CsvBuddy.ViewModels
+namespace CsvBuddy.ViewModels;
+public class InteractionViewModel : ReactiveObject
 {
-    public class InteractionViewModel : ReactiveObject
+    private readonly DataViewModel _dataViewModel;
+    public DataViewModel DataViewModel => _dataViewModel;
+
+    public InteractionViewModel(DataViewModel dataViewModel)
     {
-        public InteractionViewModel()
-        {
-            _SelectFilesInteraction = new Interaction<string?, string[]?>();
-            SelectFilesCommand = ReactiveCommand.CreateFromTask(SelectFiles);
-        }
+        _dataViewModel = dataViewModel;
+        _selectFilesInteraction = new Interaction<string?, string[]?>();
+        SelectFilesCommand = ReactiveCommand.CreateFromTask(SelectFiles);
+    }
 
-        private string[]? _selectedFiles;
-        public string[]? SelectedFiles
-        {
-            get { return _selectedFiles; }
-            set { this.RaiseAndSetIfChanged(ref _selectedFiles, value); }
-        }
+    private string[]? _selectedFiles;
+    public string[]? SelectedFiles
+    {
+        get => _selectedFiles;
+        set => this.RaiseAndSetIfChanged(ref _selectedFiles, value);
+    }
 
-
-        private readonly Interaction<string?, string[]?> _SelectFilesInteraction;
-        public Interaction<string?, string[]?> SelectFilesInteraction => this._SelectFilesInteraction;
-        public ICommand SelectFilesCommand { get; }
-        private async Task SelectFiles()
-        {
-            SelectedFiles = await _SelectFilesInteraction.Handle("Hello from Avalonia");
-        }
+    private readonly Interaction<string?, string[]?> _selectFilesInteraction;
+    public Interaction<string?, string[]?> SelectFilesInteraction => this._selectFilesInteraction;
+    public ICommand SelectFilesCommand { get; }
+    private async Task SelectFiles()
+    {
+        SelectedFiles = await _selectFilesInteraction.Handle("Hello from CSV Buddy");
+        if (SelectedFiles is { Length: > 0 })
+            _dataViewModel.LoadFromFile(SelectedFiles[0]);
     }
 }
