@@ -1,39 +1,49 @@
 using System;
-using System.Reactive.Linq;
 using Avalonia.Controls;
 using Avalonia.Data;
-using Avalonia.ReactiveUI;
 using CsvBuddy.ViewModels;
-using ReactiveUI;
 
-namespace CsvBuddy.Views;
-public partial class DataView : ReactiveUserControl<DataViewModel>
-{ 
-    public DataView()
+namespace CsvBuddy.Views
+{
+    public partial class DataView : UserControl
+    {
+        private DataViewModel? _viewModel;
+
+        public DataView()
         {
             InitializeComponent();
-            this.WhenAnyValue(x => x.DataContext)!
-                .OfType<DataViewModel>()
-                .Subscribe(vm => 
-                {
-                    vm.WhenAnyValue(x => x.ColumnCount)
-                        .Subscribe(_ => UpdateColumns());
-                });
+            DataContextChanged += OnDataContextChanged;
         }
-    private void UpdateColumns()
-    {
-        var dataViewModel = DataContext as DataViewModel;
-        MyDataGrid.Columns.Clear();
-        if (dataViewModel != null)
-            for (int i = 0; i < dataViewModel.ColumnCount; i++)
-            {
-                MyDataGrid.Columns.Add(new DataGridTextColumn
+
+        private void OnDataContextChanged(object? sender, EventArgs e)
+        {
+            if (_viewModel != null) _viewModel.PropertyChanged -= ViewModel_PropertyChanged;
+            _viewModel = DataContext as DataViewModel;
+            if (_viewModel == null) return;
+            _viewModel.PropertyChanged += ViewModel_PropertyChanged;
+            UpdateColumns();
+        }
+
+        private void ViewModel_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(DataViewModel.ColumnCount))
+                UpdateColumns();
+        }
+        
+        private void UpdateColumns()
+        {
+            if (_viewModel == null) return;
+            MyDataGrid.Columns.Clear();
+                for (var i = 0; i < _viewModel.ColumnCount; i++)
                 {
-                    Header = $"Col {i}",
-                    Binding = new Binding($"[{i}]")
-                });
-            }
+                    var columnIndex = i; 
+                    MyDataGrid.Columns.Add(new DataGridTextColumn
+                    {
+                        Header = $"Col {i}",
+                        Binding = new Binding($"[{columnIndex}]") { Mode = BindingMode.TwoWay },
+                        IsReadOnly = false
+                    });
+                }
+        }
     }
 }
-
-

@@ -11,7 +11,7 @@ public interface ITokenizer
 
 public class TokenizerService(string input) : ITokenizer
 {
-    private int _index = 0;
+    private int _index;
     private bool _hasBacktracked;
     private char _backtrackedChar;
 
@@ -52,7 +52,6 @@ public class TokenizerService(string input) : ITokenizer
         if (_index < input.Length - 1 && input[_index] == '\r' && input[_index + 1] == '\n')
             _index++;
     }
-
     private static char NormalizeLineEnding(char c) => c == '\r' ? '\n' : c;
 }
 

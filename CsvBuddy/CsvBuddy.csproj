@@ -26,6 +26,7 @@
         </PackageReference>
         <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.1"/>
         <PackageReference Include="FluentAssertions" Version="8.2.0" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.3" />
         <PackageReference Include="ReactiveUI" Version="20.2.45" />
         <PackageReference Include="xunit" Version="2.9.3" />
     </ItemGroup>

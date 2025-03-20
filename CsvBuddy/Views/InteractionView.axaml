@@ -15,7 +15,6 @@
         <ListBox ItemsSource="{Binding SelectedFiles}" 
                  VerticalAlignment="Center"
                  Height="32"/>
-        
-
     </StackPanel>
+    
 </UserControl>

@@ -13,7 +13,6 @@ namespace CsvBuddy.Views
         public InteractionView()
         {
             InitializeComponent();
-
             this.WhenActivated(d =>
             {
                 d(ViewModel!.SelectFilesInteraction.RegisterHandler(this.InteractionHandler));
@@ -32,7 +31,6 @@ namespace CsvBuddy.Views
                         AllowMultiple = false,
                         Title = context.Input
                     });
-               
             context.SetOutput(storageFiles.Select(x => x.Path.LocalPath).ToArray());
         }
     }

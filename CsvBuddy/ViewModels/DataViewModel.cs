@@ -1,44 +1,65 @@
 using System.Collections.ObjectModel;
-using System.Linq;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using CsvBuddy.Models;
-using ReactiveUI;
 using CsvBuddy.Services;
 
 namespace CsvBuddy.ViewModels
 {
-    public class DataViewModel : ReactiveObject
+    public partial class DataViewModel : ObservableObject
     {
         private readonly FileService _fileService = new();
-        private ObservableCollection<RecordViewModel> _recordViewModels = new();
-        private int _columnCount;
-    
-        public ObservableCollection<RecordViewModel> RecordViewModels
+        private CsvFile? _csvFile;
+
+        [ObservableProperty] private ObservableCollection<CsvRecord> _records = new();
+
+        [ObservableProperty] private int _columnCount;
+
+        [ObservableProperty] private CsvRecord _selectedRecord;
+
+        public DataViewModel()
         {
-            get => _recordViewModels;
-            set => this.RaiseAndSetIfChanged(ref _recordViewModels, value);
+            _selectedRecord = new CsvRecord();
+            _csvFile = new CsvFile();
+            Records = _csvFile.Records;
         }
-        public int ColumnCount
+        
+        public DataViewModel(CsvRecord selectedRecord)
         {
-            get => _columnCount;
-            set => this.RaiseAndSetIfChanged(ref _columnCount, value);
+            _selectedRecord = selectedRecord;
+            _csvFile = new CsvFile();
+            Records = _csvFile.Records;
         }
+
+        
+
+        [RelayCommand]
         public void LoadFromFile(string filePath)
         {
-            var csvFile = _fileService.LoadCsv(filePath);
-            if (csvFile == null) return;
-            ColumnCount = csvFile.Records.Max(r => r.FieldCount);
-            var records = csvFile.Records.Select(r => new RecordViewModel(r));
-            RecordViewModels = new ObservableCollection<RecordViewModel>(records);
+            _csvFile = _fileService.LoadCsv(filePath);
+            if (_csvFile == null) return;
+            Records = _csvFile.Records;
+            UpdateColumnCount();
         }
-        public class RecordViewModel(CsvRecord record) : ReactiveObject
+
+        [RelayCommand]
+        public void SaveFile()
         {
-            public string GetField(int index)
-            {
-                if (index < 0 || index >= record.FieldCount)
-                    return string.Empty;
-                return record[index].Value;
-            }
-            public string this[int index] => GetField(index);
+            if (_csvFile?.Filename != null)
+                _fileService.SaveCsv(_csvFile.Filename, _csvFile);
+        }
+
+        [RelayCommand]
+        public void AddNewRecord()
+        {
+            if (_csvFile == null) return;
+            var newRecord = _csvFile.CreateNewRecord();
+            SelectedRecord = newRecord;
+        }
+
+        private void UpdateColumnCount()
+        {
+            ColumnCount = Records.Count > 0 ? Records[0].FieldCount : 0;
         }
     }
 }

@@ -1,8 +1,7 @@
 // Recursive descent parser
 
-// Need to fix implementation to accept header record 
-
 using System;
+using CsvBuddy.Models;
 
 namespace CsvBuddy.Services;
 
@@ -55,21 +54,24 @@ public class ParserService
 
     private void ParseRawField(ITokenizer reader, IConsumer consumer)
     {
-        string fieldValue = String.Empty;
+        string fieldValue;
         char ch = reader.GetNext();
-        if (!IsFieldTerminator(ch))
+        if (IsFieldTerminator(ch)) return;
+        if (ch == '"')
         {
-            if (ch == '"')
-                fieldValue = ParseQuotedField(reader);
-            else
-                fieldValue = ParseSimpleField(reader);
+            fieldValue = ParseQuotedField(reader);
+            consumer.ConsumeField(new CsvField(fieldValue, true));
         }
-        consumer.ConsumeField(fieldValue);
+        else 
+        {
+            fieldValue = ParseSimpleField(reader);
+            consumer.ConsumeField(new CsvField(fieldValue, false));
+        }
     }
 
     private string ParseQuotedField(ITokenizer reader)
     {
-        reader.Read(); // Read and discard initial quote
+        reader.Read(); 
         string field = ParseEscapedField(reader);
         char character = reader.Read();
         if (character != '"')
@@ -119,8 +121,8 @@ public class ParserService
         return builder.ToString();
     }
 
-    private bool IsFieldTerminator(char c) => c == ',' || c == '\n' || c == CsvConstants.Eof;
-    private bool IsSpace(char c) => c == ' ' || c == '\t';
+    private bool IsFieldTerminator(char c) => c is ',' or '\n' or CsvConstants.Eof;
+    private bool IsSpace(char c) => c is ' ' or '\t';
 
     private void ParseOptionalSpaces(ITokenizer reader) 
     {

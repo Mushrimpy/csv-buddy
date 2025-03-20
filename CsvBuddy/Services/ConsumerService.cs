@@ -4,15 +4,15 @@ namespace CsvBuddy.Services;
 
 public interface IConsumer
 {
-    void ConsumeField(string s);
+    void ConsumeField(CsvField f);
     void SignalEndOfRecord();
     void SignalEndOfFile();
 }
 
-public class ConsumerService(CsvFile? csvFile) : IConsumer
+public class ConsumerService(CsvFile csvFile) : IConsumer
 {
     private CsvRecord _currentRecord = new CsvRecord();
-    public void ConsumeField(string s) => _currentRecord.AddField(s);
+    public void ConsumeField(CsvField f) => _currentRecord.AddField(f);
 
     public void SignalEndOfRecord()
     {
