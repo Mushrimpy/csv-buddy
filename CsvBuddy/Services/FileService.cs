@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using CsvBuddy.Models;
 
 namespace CsvBuddy.Services
@@ -9,18 +11,25 @@ namespace CsvBuddy.Services
     {
         private readonly ParserService _parser = new ParserService();
 
-        public CsvFile? LoadCsv(string filePath)
+        public async Task<CsvFile?> LoadCsv(string filePath, CancellationToken cancellationToken = default)
         {
             var csvFile = new CsvFile(filePath);
-            var tokenizer = new TokenizerService(File.ReadAllText(filePath));
+            var content = await File.ReadAllTextAsync(filePath, cancellationToken);
+            var tokenizer = new TokenizerService(content);
             var consumer = new ConsumerService(csvFile);
 
             _parser.Parse(tokenizer, consumer);
 
             return csvFile;
         }
-
-        public void SaveCsv(string filePath, CsvFile csvFile)
+        
+        public async Task SaveCsv(string filePath, CsvFile csvFile, CancellationToken cancellationToken = default)
+        {
+            var raw = ConvertToRaw(csvFile);
+            await File.WriteAllLinesAsync(filePath, raw, cancellationToken);
+        }
+        
+        private List<string> ConvertToRaw(CsvFile csvFile)
         {
             var lines = new List<string>();
 
@@ -44,7 +53,8 @@ namespace CsvBuddy.Services
                 }
                 lines.Add(lineBuilder.ToString());
             }
-            File.WriteAllLines(filePath, lines);
+
+            return lines;
         }
     }
 }

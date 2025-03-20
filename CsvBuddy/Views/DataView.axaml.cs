@@ -39,7 +39,7 @@ namespace CsvBuddy.Views
                     var columnIndex = i; 
                     MyDataGrid.Columns.Add(new DataGridTextColumn
                     {
-                        Header = $"Col {i}",
+                        Header = $"{i}",
                         Binding = new Binding($"[{columnIndex}]") { Mode = BindingMode.TwoWay },
                         IsReadOnly = false
                     });

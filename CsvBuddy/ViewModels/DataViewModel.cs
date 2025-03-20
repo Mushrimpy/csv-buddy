@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CsvBuddy.Models;
@@ -24,19 +25,10 @@ namespace CsvBuddy.ViewModels
             Records = _csvFile.Records;
         }
         
-        public DataViewModel(CsvRecord selectedRecord)
-        {
-            _selectedRecord = selectedRecord;
-            _csvFile = new CsvFile();
-            Records = _csvFile.Records;
-        }
-
-        
-
         [RelayCommand]
-        public void LoadFromFile(string filePath)
+        public async Task LoadFromFile(string filePath)
         {
-            _csvFile = _fileService.LoadCsv(filePath);
+            _csvFile = await _fileService.LoadCsv(filePath);
             if (_csvFile == null) return;
             Records = _csvFile.Records;
             UpdateColumnCount();
