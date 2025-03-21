@@ -10,13 +10,13 @@ Modux Micro-Internship Project, 2025
 ![Alt text](CsvBuddy/Assets/design.png?raw=true "Design Diagram")
 
 
-## Installation
+## Getting Started
 
 ### Prerequisites
 
 - .NET 9 SDK
 
-### Setup
+### Installation
 
   ```bash
   dotnet restore
@@ -38,6 +38,6 @@ dotnet run --project CsvBuddy
 
 Special thanks to Thomas Lunn for his guidance throughout the project.
 
-## Licence
+## License
 MIT
 
