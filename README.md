@@ -7,7 +7,7 @@ Modux Micro-Internship Project, 2025
 
 
 ## Design
-![Alt text](CsvBuddy/Assets/designLight.png?raw=true "Design Diagram")
+![Alt text](CsvBuddy/Assets/design.png?raw=true "Design Diagram")
 
 
 ## Installation
